@@ -2,7 +2,7 @@
 # getting input from a GUI (ref page 542/543)
 # This is for the STEM Festival programs
 
-import tkinter  # page 529 simple GUI
+import tkinter as tkinter
 
 import meteorStemStatus
 import meteorStemUtils
@@ -54,16 +54,16 @@ class MeteorGUI:
 
 
         # pack (position and order) the top frame's widgets
-        self.blank_label1.pack(side = 'top')
-        self.heading_label.pack(side = 'top')
-        self.blank_label2.pack(side = 'top')
+        self.blank_label1.pack()
+        self.heading_label.pack()
+        self.blank_label2.pack()
 
-        self.diameter_label.pack(side = 'left')
-        self.diameter_entry.pack(side = 'left')
-        self.blank_label3.pack(side = 'left')
+        self.diameter_label.pack()
+        self.diameter_entry.pack()
+        self.blank_label3.pack()
         
-        self.distance_label.pack(side = 'left')
-        self.distance_entry.pack(side = 'left')
+        self.distance_label.pack()
+        self.distance_entry.pack()
 
         
 
@@ -148,12 +148,12 @@ class MeteorGUI:
         
         meteorStemStatus.runSimulation(diam,distance, simRunning)
         
+meteor_sim = MeteorGUI()
         # Enter the tkinter main loop
-        tkinter.mainloop()
+        tkinter.self.main_window.mainloop()
 
        # after the sim runs, de iconify
         if simRunning == False:
             self.main_window.deiconify()
 
 # create an instance of the class
-meteor_sim = MeteorGUI()
