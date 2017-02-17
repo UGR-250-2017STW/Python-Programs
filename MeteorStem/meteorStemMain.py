@@ -2,8 +2,7 @@
 # getting input from a GUI (ref page 542/543)
 # This is for the STEM Festival programs
 
-import tkinter as tkinter
-
+import tkinter
 import meteorStemStatus
 import meteorStemUtils
 
@@ -128,15 +127,6 @@ class MeteorGUI:
         if badDiam == True or badDistance == True:
             tkinter.messagebox.showinfo('Bad Input Provided!', 'Bad input received.\n  Diameter:  "' + str(diam) +
                                          '" \n  Distance: "' + str(distance) + '" \n\nRunning with 3 meters at 500 miles.')
-          
-
-     #   if meteorStemUtils.validInput(diam) != True or meteorStemUtils.validInput(distance) != True:
-      #       tkinter.messagebox.showinfo('Bad Input Provided!', 'Bad input received.\n  Diameter:  "' + str(diam) +
-       #                                  '" \n  Distance: "' + str(distance) + '" \n\nRunning with 3 meters at 500 miles.')
-       #      diam = 3
-        #     distance = 500
-
-
              
         simRunning = False  # inserted for iconify and de-iconify, could use pack_forget, and then pack() again
         
@@ -148,7 +138,6 @@ class MeteorGUI:
         
         meteorStemStatus.runSimulation(diam,distance, simRunning)
         
-meteor_sim = MeteorGUI()
         # Enter the tkinter main loop
         tkinter.self.main_window.mainloop()
 
@@ -157,3 +146,5 @@ meteor_sim = MeteorGUI()
             self.main_window.deiconify()
 
 # create an instance of the class
+meteor_sim = MeteorGUI()
+meteor_sim.processData()
