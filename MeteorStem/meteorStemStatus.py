@@ -67,7 +67,7 @@ def runSimulation(diam, distance, simRunning):
     # create the button widget and label for the bottom frame
     status_window.blank_labelb = tkinter.Label(status_window.bottom_frame, text=' ')
     status_window.updateSim_button = tkinter.Button(status_window.bottom_frame, \
-                                            text='Update Simulation', command = simUpdate(distance))
+                                            text='Update Simulation', command = simUpdate(distance, diam))
 
 
     # pack the blank label and buttons in the bottom frame
@@ -81,14 +81,17 @@ def runSimulation(diam, distance, simRunning):
     status_window.bottom_frame.pack()
 
     status_window.lift()    # make it on top
+    tkinter.mainloop()
     
 
 
     #loops page 122, boolean vars page 111
 
     # call back function for the update button
-def simUpdate(distance):
+def simUpdate(distance, diam):
     distanceData = float(distance)
+    diamData = float(diam)
+    meteorSpeed = float(120 * diamData)
     tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
     
     # update the status
@@ -97,5 +100,3 @@ def simUpdate(distance):
         tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
 
     simRunning = False
-        
-

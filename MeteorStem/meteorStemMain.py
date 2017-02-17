@@ -95,7 +95,7 @@ class MeteorGUI:
         self.blank_frame3.pack()
 
         self.bottom_frame.pack()
-
+        tkinter.mainloop()
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
@@ -147,4 +147,3 @@ class MeteorGUI:
 
 # create an instance of the class
 meteor_sim = MeteorGUI()
-meteor_sim.processData()
