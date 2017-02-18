@@ -11,30 +11,37 @@ class MeteorGUI:
     def __init__(self):
         # create the main window
         self.main_window = tkinter.Tk()
+        w, h = self.main_window.winfo_screenwidth(), self.main_window.winfo_screenheight()
+        self.main_window.overrideredirect(1)
         self.main_window.title("Meteor Simulation")
-        self.main_window.minsize(width=550,height=100)   # set the window size
+        self.main_window.minsize(width=w,height=h)   # set the window size
 
         # create frames for widgets....................see page 549
         # set up a frame for each widget to position them correctly
         
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)    # has the title
-        self.blank_frame1 = tkinter.Frame(self.main_window)
+        self.earth_frame = tkinter.Frame(self.main_window)
+
+        #self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
-        self.blank_frame2 = tkinter.Frame(self.main_window)
+        #self.blank_frame2 = tkinter.Frame(self.main_window)
         self.distance_frame = tkinter.Frame(self.main_window)
-        self.blank_frame3 = tkinter.Frame(self.main_window)
+        #self.blank_frame3 = tkinter.Frame(self.main_window)
+
 
         self.bottom_frame = tkinter.Frame(self.main_window)     # bottom frame for buttons
 
 
         # create widgets for the top frame
-        self.blank_label1 = tkinter.Label(self.top_frame, text=' ')
+        #self.blank_label1 = tkinter.Label(self.top_frame, text=' ')
         self.heading_label = tkinter.Label(self.heading_frame, \
                                           text='Meteor Defense System Simulation', font=("Helvetica",18), fg="blue")
 
-        self.blank_label2 = tkinter.Label(self.blank_frame1, text=' ')
-        self.blank_label3 = tkinter.Label(self.blank_frame2, text=' ')
+
+
+        #self.blank_label2 = tkinter.Label(self.blank_frame1, text=' ')
+        #self.blank_label3 = tkinter.Label(self.blank_frame2, text=' ')
 
 
 
@@ -53,46 +60,47 @@ class MeteorGUI:
 
 
         # pack (position and order) the top frame's widgets
-        self.blank_label1.pack()
+        #self.blank_label1.pack()
         self.heading_label.pack()
-        self.blank_label2.pack()
+        #self.blank_label2.pack()
 
-        self.diameter_label.pack()
-        self.diameter_entry.pack()
-        self.blank_label3.pack()
+        self.diameter_label.pack(side='left')
+        self.diameter_entry.pack(side='left')
+        #self.blank_label3.pack()
         
-        self.distance_label.pack()
-        self.distance_entry.pack()
+        self.distance_label.pack(side='left')
+        self.distance_entry.pack(side='left')
 
         
 
         # create the button widgets and label for the bottom frame
-        self.blank_label4 = tkinter.Label(self.bottom_frame, text=' ')
+        #self.blank_label4 = tkinter.Label(self.bottom_frame, text=' ')
         self.runSim_button = tkinter.Button(self.bottom_frame, \
                                             text='Run Simulation', command=self.processData)
-        self.blank_label5 = tkinter.Label(self.bottom_frame, text=' ')
+        #self.blank_label5 = tkinter.Label(self.bottom_frame, text=' ')
         self.quit_button = tkinter.Button(self.bottom_frame, text='Quit', \
                                           command=self.main_window.destroy)
-        self.blank_label6 = tkinter.Label(self.bottom_frame, text=' ')
+        #self.blank_label6 = tkinter.Label(self.bottom_frame, text=' ')
 
         
         
 
         # pack the blank label and buttons in the bottom frame
-        self.blank_label4.pack()
+        #self.blank_label4.pack()
         self.runSim_button.pack()
-        self.blank_label5.pack()
+        #self.blank_label5.pack()
         self.quit_button.pack()
-        self.blank_label6.pack()
+        #self.blank_label6.pack()
 
         # pack the frames
         self.top_frame.pack()
         self.heading_frame.pack()
-        self.blank_frame1.pack()
+        self.earth_frame.pack(ipadx=500, ipady=400)
+        #self.blank_frame1.pack()
         self.diameter_frame.pack()
-        self.blank_frame2.pack()
+        #self.blank_frame2.pack()
         self.distance_frame.pack()
-        self.blank_frame3.pack()
+        #self.blank_frame3.pack()
 
         self.bottom_frame.pack()
         tkinter.mainloop()
