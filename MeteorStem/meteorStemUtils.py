@@ -14,10 +14,10 @@ def validInput(txt):
 
     try:
         float(txt)
-        tkinter.messagebox.showinfo('In validInput', ' try clause returning TRUE : ' + str(txt))
+        #tkinter.messagebox.showinfo('In validInput', ' try clause returning TRUE : ' + str(txt))
         return True
     except ValueError:
-        tkinter.messagebox.showinfo('In validInput', ' except clause returning FALSE : ' + str(txt))
+        #tkinter.messagebox.showinfo('In validInput', ' except clause returning FALSE : ' + str(txt))
         return False
     
  

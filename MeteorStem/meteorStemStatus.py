@@ -8,7 +8,7 @@ def runSimulation(diam, distance, simRunning):
 
     simRunning = True       # to let main loop know to deiconify the entry window
 
-    tkinter.messagebox.showinfo('Now in runSim function and boolean flag is ', str(simRunning))
+    #tkinter.messagebox.showinfo('Now in runSim function and boolean flag is ', str(simRunning))
 
 
     # type conversion page 64
@@ -24,14 +24,14 @@ def runSimulation(diam, distance, simRunning):
     
 
     # showinfo page 538, output formatting page 69
-    tkinter.messagebox.showinfo('Now in runSim function', 'The speed is ' + format(meteorSpeed, '.2f'))
+    #tkinter.messagebox.showinfo('Now in runSim function', 'The speed is ' + format(meteorSpeed, '.2f'))
     
     
 
 
     # Generating another window for status output
-    status_window = tkinter.Tk()
-    status_window.title("System Status")
+    #status_window = tkinter.Tk()
+    #status_window.title("System Status")
     #status_window.minsize(width=450,height=200)
 
     status_window.geometry('600x400+50-100')   # width, ht, 50 pixels in from left, and 100 up from bottom
@@ -81,7 +81,7 @@ def runSimulation(diam, distance, simRunning):
     status_window.bottom_frame.pack()
 
     status_window.lift()    # make it on top
-    tkinter.mainloop()
+    #tkinter.mainloop()
     
 
 
@@ -92,11 +92,11 @@ def simUpdate(distance, diam):
     distanceData = float(distance)
     diamData = float(diam)
     meteorSpeed = float(120 * diamData)
-    tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
+    #tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
     
     # update the status
     while distanceData > 0:
         distanceData = distanceData - (meteorSpeed/60)
-        tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
+        #tkinter.messagebox.showinfo('In while loop now', 'The distance is ' + format(distanceData, '.2f'))
 
     simRunning = False
