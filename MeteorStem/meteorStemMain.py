@@ -147,10 +147,12 @@ class MeteorGUI:
                                                text='BACK IN MAIN Checking for valid distance now and badDistance is: ' + str(badDistance))
         self.badDistance_label.pack()
         self.badDistance_label.config(text='TEST') # this is how I'll update a label within a loop
-        #for i in range(math.ceil(distance * 60 / meteorSpeed)):
-            #distance = distance - (meteorSpeed / 60)
-            #self.badDistance_label.config(text='Distance is now: '.format(distance))
-            #time.sleep(1)
+        for i in range(math.ceil(distance * 60 / meteorSpeed)):
+            distance = distance - (meteorSpeed / 60)
+            self.badDistance_label.config(text='Distance is now ' + str(distance))
+            self.main_window.update()
+            #self.main_window.after_idle(self.badDistance_label.config(text='Distance is now: '.format(distance)))
+            time.sleep(1)
         if meteorStemUtils.validInput(distance) == False:
             distance = '500'
             badDistance = True
@@ -197,7 +199,6 @@ class MeteorGUI:
         meteorInbound = True
         meteorSpeed = float(120 * diamFloat)
         meteorDistance = distanceFloat
-
 
 
         # showinfo page 538, output formatting page 69
