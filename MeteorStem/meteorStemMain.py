@@ -3,6 +3,7 @@
 # This is for the STEM Festival programs
 
 import tkinter
+from PIL import ImageTk, Image
 
 import time
 
@@ -27,6 +28,10 @@ class MeteorGUI:
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)    # has the title
         self.earth_frame = tkinter.Frame(self.main_window)
+        self.earth_image = ImageTk.PhotoImage(Image.open('earth.png'))
+        self.meteor_image = ImageTk.PhotoImage(Image.open('meteor.png'))
+        self.earth_label = tkinter.Label(self.earth_frame, image=self.earth_image)
+        self.meteor_label = tkinter.Label(self.earth_frame, image=self.meteor_image)
 
         #self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -71,6 +76,8 @@ class MeteorGUI:
 
         self.diameter_label.pack(side='left')
         self.diameter_entry.pack(side='left')
+        self.earth_label.pack()
+        self.meteor_label.pack()
         #self.blank_label3.pack()
         
         self.distance_label.pack(side='left')
@@ -100,7 +107,7 @@ class MeteorGUI:
         # pack the frames
         self.top_frame.pack()
         self.heading_frame.pack()
-        self.earth_frame.pack(ipadx=500, ipady=400)
+        self.earth_frame.pack(ipadx=100, ipady=100)
         #self.blank_frame1.pack()
         self.diameter_frame.pack()
         #self.blank_frame2.pack()
@@ -112,7 +119,7 @@ class MeteorGUI:
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
-        self.runSim_button.config(state=tkinter.DISABLED)
+        self.runSim_button.config(text='Launch')
         diam = (self.diameter_entry.get())
         diam = float(diam)
         distance = (self.distance_entry.get())
@@ -150,6 +157,10 @@ class MeteorGUI:
         for i in range(math.ceil(distance * 60 / meteorSpeed)):
             distance = distance - (meteorSpeed / 60)
             self.badDistance_label.config(text='Distance is now ' + str(distance))
+            if(distance >= 1200 and distance <= 1400):
+                self.runSim_button.config(background='green')
+            else:
+                self.runSim_button.config(background='red')
             self.main_window.update()
             #self.main_window.after_idle(self.badDistance_label.config(text='Distance is now: '.format(distance)))
             time.sleep(1)
