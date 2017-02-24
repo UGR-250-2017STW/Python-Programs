@@ -18,7 +18,7 @@ class MeteorGUI:
         # create the main window
         self.main_window = tkinter.Tk()
         w, h = self.main_window.winfo_screenwidth(), self.main_window.winfo_screenheight()
-        #self.main_window.overrideredirect(1)           # potentially malicious line
+        self.main_window.overrideredirect(1)           # potentially malicious line
         self.main_window.title("Meteor Simulation")
         self.main_window.minsize(width=w,height=h)   # set the window size
 
@@ -159,6 +159,8 @@ class MeteorGUI:
             self.badDistance_label.config(text='Distance is now ' + str(distance))
             if(distance >= 1200 and distance <= 1400):
                 self.runSim_button.config(background='green')
+            elif(distance <= 0):
+                self.main_window.destroy()
             else:
                 self.runSim_button.config(background='red')
             self.main_window.update()
