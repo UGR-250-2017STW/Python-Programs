@@ -11,27 +11,34 @@ import math
 
 import meteorStemStatus
 import meteorStemUtils
+import threading
 
+global meteor_x
+global meteor_y
+meteor_x = 500
+meteor_y = 500
 
 class MeteorGUI:
     def __init__(self):
         # create the main window
         self.main_window = tkinter.Tk()
         w, h = self.main_window.winfo_screenwidth(), self.main_window.winfo_screenheight()
-        self.main_window.overrideredirect(1)           # potentially malicious line
+        #self.main_window.overrideredirect(1)           # potentially malicious line
         self.main_window.title("Meteor Simulation")
         self.main_window.minsize(width=w,height=h)   # set the window size
+        global meteor_y
+        global meteor_x
 
         # create frames for widgets....................see page 549
         # set up a frame for each widget to position them correctly
         
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)    # has the title
-        self.earth_frame = tkinter.Frame(self.main_window)
+        self.earth_canvas = tkinter.Canvas(self.main_window)
         self.earth_image = ImageTk.PhotoImage(Image.open('earth.png'))
         self.meteor_image = ImageTk.PhotoImage(Image.open('meteor.png'))
-        self.earth_label = tkinter.Label(self.earth_frame, image=self.earth_image)
-        self.meteor_label = tkinter.Label(self.earth_frame, image=self.meteor_image)
+        self.earth_label = tkinter.Label(self.earth_canvas , image=self.earth_image)
+        self.meteor_label = tkinter.Label(self.earth_canvas, image=self.meteor_image)
 
         #self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -55,7 +62,7 @@ class MeteorGUI:
 
 
 
-    # the Enry widgets
+        # the Enry widgets
         self.diameter_label = tkinter.Label(self.diameter_frame, \
                                           text='Enter the meteor diameter in meters:  ', font=("Helvetica",10))
         self.diameter_entry = tkinter.Entry(self.diameter_frame, width = 20)
@@ -88,11 +95,14 @@ class MeteorGUI:
         # create the button widgets and label for the bottom frame
         #self.blank_label4 = tkinter.Label(self.bottom_frame, text=' ')
         self.runSim_button = tkinter.Button(self.bottom_frame, \
-                                            text='Run Simulation', command=self.processData)
+                                            text='Run Simulation', command=self.animate)
+        #self.runSim_button = tkinter.Button(self.bottom_frame, \
+                                            #text='Run Simulation', command=self.processData)
         #self.blank_label5 = tkinter.Label(self.bottom_frame, text=' ')
         self.quit_button = tkinter.Button(self.bottom_frame, text='Quit', \
                                           command=self.main_window.destroy)
         #self.blank_label6 = tkinter.Label(self.bottom_frame, text=' ')
+
 
         
         
@@ -107,7 +117,7 @@ class MeteorGUI:
         # pack the frames
         self.top_frame.pack()
         self.heading_frame.pack()
-        self.earth_frame.pack(ipadx=100, ipady=100)
+        self.earth_canvas.pack(ipadx=200, ipady=200)
         #self.blank_frame1.pack()
         self.diameter_frame.pack()
         #self.blank_frame2.pack()
@@ -115,11 +125,31 @@ class MeteorGUI:
         #self.blank_frame3.pack()
 
         self.bottom_frame.pack()
+
         tkinter.mainloop()
 
+    def animate(self):
+        self.draw_one_frame()
+        self.main_window.after(1000, self.animate)
+
+    def draw_one_frame(self):
+        global meteor_y
+        global meteor_x
+        self.earth_canvas.create_image(int(meteor_x), int(meteor_y), image=self.meteor_image)
+        meteor_y -= 10
+        meteor_x -= 10
+
     # Retrieve the data from the text box and call the function in meteorCalc
+    def spawnThreads(self):
+        t1 = threading.Thread(target=self.animate)
+        t2 = threading.Thread(target=self.processData)
+        t1.start()
+        t2.start()
+
     def processData(self):
         self.runSim_button.config(text='Launch')
+        #self.animate()
+
         diam = (self.diameter_entry.get())
         diam = float(diam)
         distance = (self.distance_entry.get())
