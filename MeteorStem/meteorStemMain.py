@@ -4,41 +4,30 @@
 
 import tkinter
 from PIL import ImageTk, Image
-
 import time
-
 import math
-
 import meteorStemStatus
 import meteorStemUtils
-import threading
-
-global meteor_x
-global meteor_y
-meteor_x = 500
-meteor_y = 500
 
 class MeteorGUI:
     def __init__(self):
         # create the main window
         self.main_window = tkinter.Tk()
+        self.meteor_x = 500
+        self.meteor_y = 500
         w, h = self.main_window.winfo_screenwidth(), self.main_window.winfo_screenheight()
         #self.main_window.overrideredirect(1)           # potentially malicious line
         self.main_window.title("Meteor Simulation")
         self.main_window.minsize(width=w,height=h)   # set the window size
-        global meteor_y
-        global meteor_x
 
         # create frames for widgets....................see page 549
         # set up a frame for each widget to position them correctly
         
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)    # has the title
-        self.earth_canvas = tkinter.Canvas(self.main_window)
+        self.earth_canvas = tkinter.Canvas(self.main_window, width=2000, height=800, bg="black")
         self.earth_image = ImageTk.PhotoImage(Image.open('earth.png'))
         self.meteor_image = ImageTk.PhotoImage(Image.open('meteor.png'))
-        self.earth_label = tkinter.Label(self.earth_canvas , image=self.earth_image)
-        self.meteor_label = tkinter.Label(self.earth_canvas, image=self.meteor_image)
 
         #self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -83,8 +72,6 @@ class MeteorGUI:
 
         self.diameter_label.pack(side='left')
         self.diameter_entry.pack(side='left')
-        self.earth_label.pack()
-        self.meteor_label.pack()
         #self.blank_label3.pack()
         
         self.distance_label.pack(side='left')
@@ -95,7 +82,7 @@ class MeteorGUI:
         # create the button widgets and label for the bottom frame
         #self.blank_label4 = tkinter.Label(self.bottom_frame, text=' ')
         self.runSim_button = tkinter.Button(self.bottom_frame, \
-                                            text='Run Simulation', command=self.animate)
+                                            text='Run Simulation', command=self.processData)
         #self.runSim_button = tkinter.Button(self.bottom_frame, \
                                             #text='Run Simulation', command=self.processData)
         #self.blank_label5 = tkinter.Label(self.bottom_frame, text=' ')
@@ -117,36 +104,28 @@ class MeteorGUI:
         # pack the frames
         self.top_frame.pack()
         self.heading_frame.pack()
-        self.earth_canvas.pack(ipadx=200, ipady=200)
+        self.earth_canvas.pack()
+        self.earth_canvas_image = self.earth_canvas.create_image(1000, 400, image=self.earth_image)
+        self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y), image=self.meteor_image)
         #self.blank_frame1.pack()
         self.diameter_frame.pack()
         #self.blank_frame2.pack()
         self.distance_frame.pack()
         #self.blank_frame3.pack()
-
         self.bottom_frame.pack()
 
         tkinter.mainloop()
 
     def animate(self):
         self.draw_one_frame()
-        self.main_window.after(1000, self.animate)
+        self.main_window.after(5, self.animate)
 
     def draw_one_frame(self):
-        global meteor_y
-        global meteor_x
-        self.earth_canvas.create_image(int(meteor_x), int(meteor_y), image=self.meteor_image)
-        meteor_y -= 10
-        meteor_x -= 10
+        self.earth_canvas.move(self.meteor_canvas_image,1,0)
 
     # Retrieve the data from the text box and call the function in meteorCalc
-    def spawnThreads(self):
-        t1 = threading.Thread(target=self.animate)
-        t2 = threading.Thread(target=self.processData)
-        t1.start()
-        t2.start()
-
     def processData(self):
+        self.animate()
         self.runSim_button.config(text='Launch')
         #self.animate()
 
