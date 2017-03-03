@@ -35,6 +35,8 @@ class MeteorGUI:
         self.meteor_y = 0
         self.rocket_x = 1050
         self.rocket_y = 400
+        self.meteor_width = 50
+        self.meteor_height = 50
 
         # self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -120,21 +122,23 @@ class MeteorGUI:
 
     def animate(self):
         self.draw_one_frame()
-        self.main_window.after(1, self.animate)
+        self.main_window.after(10, self.animate)
 
     def animate_rocket(self):
-        self.rocket_x -= 1
-        self.rocket_y -= 1
+        self.rocket_x -= 5
+        self.rocket_y -= 5
         self.rocket_image = Image.open('rocket.png')
         self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
         self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
                                                                   image=self.rocket_photo_image)
-        self.main_window.after(1, self.animate_rocket)
+        self.main_window.after(10, self.animate_rocket)
 
     def draw_one_frame(self):
-        self.meteor_x += 1
-        self.meteor_y += 1
-        self.meteor_image = self.meteor_image.resize((250, 250), Image.ANTIALIAS)
+        self.meteor_x += 10
+        self.meteor_y += 10
+        self.meteor_width += 10
+        self.meteor_height += 10
+        self.meteor_image = self.meteor_image.resize((self.meteor_width, self.meteor_height), Image.ANTIALIAS)
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
         self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                   image=self.meteor_photo_image)
