@@ -30,7 +30,7 @@ class MeteorGUI:
         self.earth_photo_image = ImageTk.PhotoImage(self.earth_image)
         self.meteor_image = Image.open('meteor.png')
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
-
+        self._job = 0
         self.meteor_x = 0
         self.meteor_y = 0
         self.rocket_x = 1050
@@ -118,18 +118,25 @@ class MeteorGUI:
 
         tkinter.mainloop()
 
-    def animate(self):
-        self.draw_one_frame()
-        self.main_window.after(1, self.animate)
+    def animate_meteor(self, cancel=False):
+        if cancel==False:
+            self.draw_one_frame()
+            self.main_window.after(1, self.animate_meteor)
+        else:
+            return
 
-    def animate_rocket(self):
-        self.rocket_x -= 1
-        self.rocket_y -= 1
-        self.rocket_image = Image.open('rocket.png')
-        self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
-        self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
+    def animate_rocket(self, cancel=False):
+        self.animate_meteor(True)
+        if cancel==False:
+            self.rocket_x -= 1
+            self.rocket_y -= 1
+            self.rocket_image = Image.open('rocket.png')
+            self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
+            self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
                                                                   image=self.rocket_photo_image)
-        self.main_window.after(1, self.animate_rocket)
+            self.main_window.after(1, self.animate_rocket)
+        else:
+            return
 
     def draw_one_frame(self):
         self.meteor_x += 1
@@ -141,8 +148,8 @@ class MeteorGUI:
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
-        self.animate()
-        self.runSim_button.config(text='Launch', command=self.animate_rocket())
+        self.animate_meteor()
+        self.runSim_button.config(text='Launch', command=self.animate_rocket)
 
         diam = (self.diameter_entry.get())
         diam = float(diam)
@@ -181,7 +188,7 @@ class MeteorGUI:
         self.badDistance_label.pack()
         self.badDistance_label.config(text='TEST')  # this is how I'll update a label within a loop
         for i in range(math.ceil(distance * 60 / meteorSpeed)):
-            distance = distance - (meteorSpeed / 60)
+            distance = distance - (meteorSpeed / 60/10)
             self.badDistance_label.config(text='Distance is now ' + str(distance))
             if (distance >= 1200 and distance <= 1400):
                 self.runSim_button.config(background='green')
@@ -191,7 +198,7 @@ class MeteorGUI:
                 self.runSim_button.config(background='red')
             self.main_window.update()
             # self.main_window.after_idle(self.badDistance_label.config(text='Distance is now: '.format(distance)))
-            time.sleep(1)
+            time.sleep(.1)
         if meteorStemUtils.validInput(distance) == False:
             distance = '500'
             badDistance = True
