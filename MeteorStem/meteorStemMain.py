@@ -33,8 +33,12 @@ class MeteorGUI:
         self._job = 0
         self.meteor_x = 100
         self.meteor_y = 100
+        self.meteor_h = 250
+        self.meteor_w = 250
         self.rocket_x = 1050
         self.rocket_y = 400
+        self.rocket_h = 10
+        self.rocket_w = 20
         self.rocket_dy = 5
         self.rocket_dx = 5
 
@@ -123,25 +127,27 @@ class MeteorGUI:
     def animate_meteor(self, cancel=False):
         if cancel==False:
             self.draw_one_frame()
-            self.main_window.after(100, self.animate_meteor)
+            self.animate_meteor_id = self.main_window.after(100, self.animate_meteor)
         else:
-            return
+            self.main_window.after_cancel(self.animate_meteor_id)
 
     def animate_rocket(self, cancel=False):
-        #self.animate_meteor(True)
         if cancel==False:
             #while abs(self.meteor_x - self.rocket_x) > 10 and abs(self.meteor_y - self.rocket_y) > 10:
             if self.meteor_x > self.rocket_x:
                 self.rocket_x += self.rocket_dx
             elif self.meteor_x < self.rocket_x:
                 self.rocket_x -= self.rocket_dx
+                self.rocket_h += 5
+                self.rocket_w += 5
             if self.meteor_y > self.rocket_y:
                 self.rocket_y += self.rocket_dy
             elif self.meteor_y < self.rocket_y:
                 self.rocket_y -= self.rocket_dy
             if abs(self.meteor_x - self.rocket_x) < 20 and abs(self.meteor_y - self.rocket_y) < 20:
-                return
+                self.animate_meteor(True)
             self.rocket_image = Image.open('rocket.png')
+            self.rocket_image = self.rocket_image.resize((self.rocket_h, self.rocket_w), Image.ANTIALIAS)
             self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
             self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
                                                                           image=self.rocket_photo_image)
@@ -152,7 +158,10 @@ class MeteorGUI:
     def draw_one_frame(self):
         self.meteor_x += 20
         self.meteor_y += 5
-        self.meteor_image = self.meteor_image.resize((250, 250), Image.ANTIALIAS)
+        self.meteor_h -= 5
+        self.meteor_w -= 5
+        self.meteor_image = Image.open('meteor.png')
+        self.meteor_image = self.meteor_image.resize((self.meteor_h, self.meteor_w), Image.ANTIALIAS)
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
         self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                   image=self.meteor_photo_image)
