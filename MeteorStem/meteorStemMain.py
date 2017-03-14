@@ -3,7 +3,7 @@
 # This is for the STEM Festival programs
 
 import tkinter
-from random import randrange
+from random import randrange, randint
 from PIL import ImageTk, Image
 import time
 import math
@@ -25,14 +25,15 @@ class MeteorGUI:
 
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)  # has the title
-        self.earth_canvas = tkinter.Canvas(self.main_window, width=2000, height=800, bg="black")
+        self.canvas_h = 800
+        self.canvas_w = 2000
+        self.earth_canvas = tkinter.Canvas(self.main_window, width=self.canvas_w, height=self.canvas_h, bg="black")
         self.earth_image = Image.open('earth.png')
         self.earth_photo_image = ImageTk.PhotoImage(self.earth_image)
         self.meteor_image = Image.open('meteor.png')
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
-        self._job = 0
-        self.meteor_x = 100
-        self.meteor_y = 100
+        self.meteor_x = 0
+        self.meteor_y = 0
         self.meteor_h = 250
         self.meteor_w = 250
         self.rocket_x = 1050
@@ -41,6 +42,8 @@ class MeteorGUI:
         self.rocket_w = 20
         self.rocket_dy = 5
         self.rocket_dx = 5
+        self.earth_x = 1000
+        self.earth_y = 400
 
         # self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -112,7 +115,7 @@ class MeteorGUI:
         self.top_frame.pack()
         self.heading_frame.pack()
         self.earth_canvas.pack()
-        self.earth_canvas_image = self.earth_canvas.create_image(1000, 400, image=self.earth_photo_image)
+        self.earth_canvas_image = self.earth_canvas.create_image(self.earth_x, self.earth_y, image=self.earth_photo_image)
         self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                   image=self.meteor_photo_image)
         # self.blank_frame1.pack()
@@ -126,7 +129,7 @@ class MeteorGUI:
 
     def animate_meteor(self, cancel=False):
         if cancel==False:
-            self.draw_one_frame()
+            self.draw_one_meteor_frame()
             self.animate_meteor_id = self.main_window.after(100, self.animate_meteor)
         else:
             self.main_window.after_cancel(self.animate_meteor_id)
@@ -155,11 +158,11 @@ class MeteorGUI:
         else:
             return
 
-    def draw_one_frame(self):
-        self.meteor_x += 20
-        self.meteor_y += 5
-        self.meteor_h -= 5
-        self.meteor_w -= 5
+    def draw_one_meteor_frame(self):
+        self.meteor_x += 7
+        self.meteor_y += math.ceil((self.earth_y - self.meteor_y)/(self.earth_x - self.meteor_x)*self.meteor_x)
+        self.meteor_h -= 2
+        self.meteor_w -= 2
         self.meteor_image = Image.open('meteor.png')
         self.meteor_image = self.meteor_image.resize((self.meteor_h, self.meteor_w), Image.ANTIALIAS)
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
@@ -168,12 +171,18 @@ class MeteorGUI:
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
+        self.distance = int((self.distance_entry.get()))
+        self.meteor_y = randint(0,800)
+        self.meteor_x = math.floor(math.sqrt(abs(pow(self.distance, 2) - pow(self.meteor_y, 2))))    # Pythagoras's Identity
+        if (self.meteor_x > self.canvas_w):
+            self.meteor_x = 2000
+        elif (self.meteor_x < 0):
+            self.meteor_x = 0
         self.animate_meteor()
         self.runSim_button.config(text='Launch', command=self.animate_rocket)
 
         diam = (self.diameter_entry.get())
         diam = float(diam)
-        distance = (self.distance_entry.get())
         distance = float(distance)
         # = randrange(800)
         # = int(math.sqrt(math.pow(int(distance*20),2)- math.pow(self.meteor_y, 2)))
