@@ -22,6 +22,8 @@ class MeteorGUI:
 
         # create frames for widgets....................see page 549
         # set up a frame for each widget to position them correctly
+        self.earth_y = 400
+        self.earth_x = 1000
 
         self.top_frame = tkinter.Frame(self.main_window)
         self.heading_frame = tkinter.Frame(self.main_window)  # has the title
@@ -34,6 +36,10 @@ class MeteorGUI:
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
         self.meteor_x = 0
         self.meteor_y = 0
+        self.meteor_dx = 1
+        self.meteor_dy = 1
+        self.meteor_deltaerr = self.earth_y/self.earth_x
+        self.meteor_err = self.meteor_deltaerr - 0.5
         self.meteor_h = 250
         self.meteor_w = 250
         self.rocket_x = 1050
@@ -42,8 +48,6 @@ class MeteorGUI:
         self.rocket_w = 20
         self.rocket_dy = 5
         self.rocket_dx = 5
-        self.earth_x = 1000
-        self.earth_y = 400
 
         # self.blank_frame1 = tkinter.Frame(self.main_window)
         self.diameter_frame = tkinter.Frame(self.main_window)
@@ -75,7 +79,7 @@ class MeteorGUI:
                                             font=("Helvetica", 10))
 
         self.distance_entry = tkinter.Entry(self.distance_frame, width=20)
-        self.distance_entry.insert(0, 500)
+        self.distance_entry.insert(0, 200)
 
         # pack (position and order) the top frame's widgets
         # self.blank_label1.pack()
@@ -137,47 +141,61 @@ class MeteorGUI:
     def animate_rocket(self, cancel=False):
         if cancel==False:
             #while abs(self.meteor_x - self.rocket_x) > 10 and abs(self.meteor_y - self.rocket_y) > 10:
+            self.rocket_h += 5
+            self.rocket_w += 5
             if self.meteor_x > self.rocket_x:
                 self.rocket_x += self.rocket_dx
             elif self.meteor_x < self.rocket_x:
                 self.rocket_x -= self.rocket_dx
-                self.rocket_h += 5
-                self.rocket_w += 5
             if self.meteor_y > self.rocket_y:
                 self.rocket_y += self.rocket_dy
             elif self.meteor_y < self.rocket_y:
                 self.rocket_y -= self.rocket_dy
             if abs(self.meteor_x - self.rocket_x) < 20 and abs(self.meteor_y - self.rocket_y) < 20:
                 self.animate_meteor(True)
+                self.main_window.after_cancel(self.animate_rocket_id)
+                self.rocket_canvas_image.config(image='')
+                self.meteor_canvas_image.config(image='')
+                return
             self.rocket_image = Image.open('rocket.png')
             self.rocket_image = self.rocket_image.resize((self.rocket_h, self.rocket_w), Image.ANTIALIAS)
             self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
             self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
                                                                           image=self.rocket_photo_image)
-            self.main_window.after(100, self.animate_rocket)
-        else:
-            return
+            self.animate_rocket_id =self.main_window.after(100, self.animate_rocket)
 
     def draw_one_meteor_frame(self):
-        self.meteor_x += 7
-        self.meteor_y += math.ceil((self.earth_y - self.meteor_y)/(self.earth_x - self.meteor_x)*self.meteor_x)
-        self.meteor_h -= 2
-        self.meteor_w -= 2
+        self.meteor_h -= 1
+        self.meteor_w -= 1
         self.meteor_image = Image.open('meteor.png')
         self.meteor_image = self.meteor_image.resize((self.meteor_h, self.meteor_w), Image.ANTIALIAS)
         self.meteor_photo_image = ImageTk.PhotoImage(self.meteor_image)
+        self.meteor_err = self.meteor_err + self.meteor_deltaerr
         self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                   image=self.meteor_photo_image)
+        self.meteor_x += self.meteor_dx
+        if self.meteor_err >= 0.5:
+            self.meteor_y += self.meteor_dy
+            self.meteor_err = self.meteor_err - 1
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
-        self.distance = int((self.distance_entry.get()))
-        self.meteor_y = randint(0,800)
+        # have to calculate distance relative to Earth, add
+        self.distance = int((self.distance_entry.get())) + self.earth_x
+        self.meteor_y = randint(0,self.canvas_w)
         self.meteor_x = math.floor(math.sqrt(abs(pow(self.distance, 2) - pow(self.meteor_y, 2))))    # Pythagoras's Identity
+        if self.meteor_x > self.earth_x:
+            self.meteor_dx = -1
+        if self.meteor_y > self.earth_y:
+            self.meteor_dy = -1
         if (self.meteor_x > self.canvas_w):
-            self.meteor_x = 2000
+            self.meteor_x = self.canvas_w
         elif (self.meteor_x < 0):
             self.meteor_x = 0
+        if(self.meteor_y > self.canvas_h):
+            self.meteor_y = self.canvas_h
+        elif (self.meteor_y < 0):
+            self.meteor_y = 0
         self.animate_meteor()
         self.runSim_button.config(text='Launch', command=self.animate_rocket)
 
@@ -229,7 +247,7 @@ class MeteorGUI:
             # self.main_window.after_idle(self.badDistance_label.config(text='Distance is now: '.format(distance)))
             time.sleep(.1)
         if meteorStemUtils.validInput(distance) == False:
-            distance = '500'
+            distance = '300'
             badDistance = True
             self.badDistance_label.config(text='Bad Input Provided badDistance now equals ' + str(badDistance))
 
