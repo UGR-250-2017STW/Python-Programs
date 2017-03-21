@@ -42,6 +42,7 @@ class MeteorGUI:
         self.meteor_dy = 1
         self.meteor_deltaerr = self.earth_y/self.earth_x
         self.meteor_err = self.meteor_deltaerr - 0.5
+        self.meteor_drr = 1
         self.meteor_h = 250
         self.meteor_w = 250
         self.rocket_x = 1050
@@ -139,16 +140,20 @@ class MeteorGUI:
             self.distance = self.distance - (self.meteorSpeed / 60/10)
             self.distance_label.config(text='Distance is now {:d}'.format(int(self.distance)))
             if (int(self.distance) >= 1200 and int(self.distance) <= 1400):
-                self.runSim_button.config(state='normal', background='green', command=self.animate_rocket_success)
+                self.runSim_button.config(background='green', command=self.animate_rocket_success)
             else:
-                self.runSim_button.config(state='normal',background='red',command=self.animate_rocket_fail)
-            self.animate_meteor_id = self.main_window.after(100, self.animate_meteor)
+                self.runSim_button.config(background='red',command=self.animate_rocket_fail)
+            self.animate_meteor_id = self.main_window.after(50, self.animate_meteor)
         else:
+            self.explosion_image = Image.open('explosion.png')
+            self.explosion_image = self.explosion_image.resize((self.meteor_w+40, self.meteor_h+40), Image.ANTIALIAS)
+            self.explosion_photo_image = ImageTk.PhotoImage(self.explosion_image)
             self.explosion_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                          image=self.explosion_photo_image)
             self.main_window.after_cancel(self.animate_meteor_id)
 
     def animate_rocket_fail(self, cancel=False):
+        self.runSim_button.config(state='disabled')
         self.rocket_h += 2
         self.rocket_w += 2
         self.rocket_x -= 5
@@ -161,7 +166,7 @@ class MeteorGUI:
         self.animate_rocket_fail_id =self.main_window.after(100, self.animate_rocket_fail)
 
     def animate_rocket_success(self, cancel=False):
-        if self.rocket_h == 8:
+        if self.rocket_h == 10:
             self.runSim_button.config(state='disabled')
         if cancel==False:
             #while abs(self.meteor_x - self.rocket_x) > 10 and abs(self.meteor_y - self.rocket_y) > 10:
@@ -184,7 +189,7 @@ class MeteorGUI:
             self.rocket_photo_image = ImageTk.PhotoImage(self.rocket_image)
             self.rocket_canvas_image = self.earth_canvas.create_image(int(self.rocket_x), int(self.rocket_y),
                                                                           image=self.rocket_photo_image)
-            self.animate_rocket_success_id =self.main_window.after(100, self.animate_rocket_success)
+            self.animate_rocket_success_id =self.main_window.after(50, self.animate_rocket_success)
 
     def draw_one_meteor_frame(self):
         self.meteor_image = Image.open('meteor.png')
@@ -194,25 +199,32 @@ class MeteorGUI:
         self.meteor_canvas_image = self.earth_canvas.create_image(int(self.meteor_x), int(self.meteor_y),
                                                                   image=self.meteor_photo_image)
         self.meteor_x += self.meteor_dx
-        if self.meteor_err >= 0.5:
+        if abs(self.meteor_err) >= 0.5:
             self.meteor_y += self.meteor_dy
             self.meteor_w -= 1
             self.meteor_h -= 1
-            self.meteor_err = self.meteor_err - 1
+            self.meteor_err -= self.meteor_drr
 
     # Retrieve the data from the text box and call the function in meteorCalc
     def processData(self):
         # have to calculate distance relative to Earth, add
-        self.distance = int((self.distance_entry.get())) + self.earth_x
+        self.distance = 1500
+        #self.distance = int((self.distance_entry.get())) + self.earth_x
         self.diam = int((self.diameter_entry.get()))
         self.meteorSpeed = float(120 * self.diam)
-        self.meteor_y = randint(0,self.canvas_w)
-        self.meteor_x = math.floor(math.sqrt(abs(pow(self.distance, 2) - pow(self.meteor_y, 2))))    # Pythagoras's Identity
+        self.meteor_y = randint(0,self.canvas_h)
+        self.meteor_x = math.floor(math.sqrt(abs(pow(self.canvas_h, 2) - pow(self.meteor_y, 2))))    # Pythagoras's Identity
+        self.meteor_deltaerr = (self.earth_y-self.meteor_y)/(self.earth_x-self.meteor_x)
         self.runSim_button.config(state='normal', text='Launch', background='red', command=self.animate_rocket_fail)
         if self.meteor_x > self.earth_x:
-            self.meteor_dx = -1
+            self.meteor_dx = -self.meteor_dx
+        #if self.meteor_x == self.earth_x:
+        #    self.meteor_dx = 0
         if self.meteor_y > self.earth_y:
-            self.meteor_dy = -1
+            self.meteor_dy = -self.meteor_dy
+            self.meteor_drr = -self.meteor_drr
+        #if self.meteor_y == self.earth_y:
+        #    self.meteor_dy = 0
         if (self.meteor_x > self.canvas_w):
             self.meteor_x = self.canvas_w
         elif (self.meteor_x < 0):
